@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142d3b">
+<title>Mein Krafttraining</title>
+<style>
+:root{--ink:#183443;--muted:#687984;--bg:#f3f6f7;--card:#fff;--line:#dfe7ea;--accent:#1b6b59;--soft:#e8f3ef;--gold:#b87928}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#1c303a;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--ink);color:white;padding:22px 16px 18px}header .wrap,main{max-width:760px;margin:auto}
+h1{font-size:25px;margin:0 0 4px}header p{margin:0;color:#d5e1e5;font-size:14px}
+main{padding:16px 12px 44px}.tabs{display:flex;gap:8px;margin:0 0 14px}
+.tab{flex:1;border:1px solid var(--line);background:white;border-radius:12px;padding:12px 6px;font-weight:700;color:var(--ink);font-size:15px}
+.tab.active{background:var(--ink);color:white;border-color:var(--ink)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 2px}
+h2{font-size:21px;margin:0;color:var(--ink)}.sub{font-size:13px;color:var(--muted);margin-top:2px}
+.progress{height:7px;background:#dfe7e9;border-radius:9px;overflow:hidden;margin:12px 2px 16px}.progress span{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.exercise{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 2px 8px #17334208}
+.exhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.exhead h3{margin:0;color:var(--ink);font-size:17px}.target{font-size:13px;color:var(--muted);margin:3px 0 10px}
+.prev{background:#f2f6f5;border-left:3px solid var(--accent);border-radius:8px;padding:9px 10px;margin:10px 0;font-size:13px}
+.prev strong{color:var(--accent)}.prev .muted{color:var(--muted)}
+.set{display:grid;grid-template-columns:42px 1fr 1fr 84px;gap:7px;align-items:end;margin:9px 0}
+.setnum{font-size:13px;color:var(--muted);padding:10px 0}
+label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px}
+input,textarea{width:100%;border:1px solid #cfdadd;border-radius:9px;padding:10px;font:inherit;background:white;color:#1c303a;min-width:0}
+input[type=checkbox]{width:21px;height:21px;accent-color:var(--accent);margin:0 auto 8px;display:block}
+.donecell{text-align:center;font-size:10px;color:var(--muted)}
+.setup{margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.setup summary{font-weight:700;color:var(--ink);font-size:14px;cursor:pointer}
+.setupgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.notes{margin-top:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+button.action{border:0;border-radius:11px;background:var(--accent);color:white;padding:12px 15px;font-weight:700;font-size:14px}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}
+button:active{transform:scale(.99)}
+.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin:14px 0}
+.panel h3{margin:0 0 8px;color:var(--ink)}.historyitem{padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.historyitem:first-of-type{border-top:0}.small{font-size:12px;color:var(--muted)}
+.notice{background:#fff8e9;border:1px solid #f0dfbd;color:#77531f;padding:11px;border-radius:11px;font-size:13px;margin:12px 0}
+footer{font-size:12px;color:var(--muted);text-align:center;padding:18px 8px}
+@media(max-width:430px){.set{grid-template-columns:32px 1fr 1fr 66px;gap:5px}.set input{padding:9px 7px}.exercise{padding:13px}.tab{font-size:14px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Krafttraining">
+\n</head>
+<body>
+<header><div class="wrap"><h1>Mein Krafttraining</h1><p>Trainingsplan · Gewichte · Wiederholungen · Geräteeinstellungen</p></div></header>
+<main>
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-plan="A">Training A</button>
+    <button class="tab" data-plan="B">Training B</button>
+    <button class="tab" data-plan="C">Training C</button>
+  </div>
+  <div class="topline"><div><h2 id="planTitle">Training A</h2><div class="sub" id="planSub">Langer Ganzkörpertag · ca. 60–70 Minuten</div></div><div class="small" id="dateLabel"></div></div>
+  <div class="progress"><span id="progressBar"></span></div>
+  <div class="small" id="progressText" style="margin:0 2px 8px">0 von 7 Übungen erledigt</div>
+  <div class="notice">Tipp: Trage bei „Geräteeinstellungen“ z. B. Sitzhöhe, Lehne, Polster oder Steckposition ein. Beim nächsten Training werden deine letzten Angaben hier angezeigt.</div>
+  <div id="exercises"></div>
+  <div class="actions">
+    <button class="action" id="saveBtn">Training speichern</button>
+    <button class="action secondary" id="resetBtn">Eingaben zurücksetzen</button>
+  </div>
+  <section class="panel"><h3>Deine letzten Trainings</h3><div id="history"><span class="small">Noch keine Trainingseinheiten gespeichert.</span></div></section>
+  <section class="panel"><h3>Datensicherung</h3><p class="small">Deine Einträge werden in diesem Browser auf diesem Gerät gespeichert. Exportiere gelegentlich eine Sicherung, damit deine Trainingsdaten nicht verloren gehen.</p>
+    <div class="actions" style="margin-bottom:0"><button class="action secondary" id="exportBtn">Daten exportieren</button><button class="action secondary" id="importBtn">Sicherung importieren</button><input type="file" id="importFile" accept="application/json" hidden></div>
+  </section>
+  <footer>Dein Trainingsplan A · B · C. Bei Schmerzen eine Übung abbrechen und nicht durch den Schmerz trainieren.</footer>
+</main>
+<script>
+const plans={
+ A:{sub:"Langer Ganzkörpertag · ca. 60–70 Minuten",items:[
+ ["Beinpresse",2,"10–12","Nur schmerzfrei und kontrolliert testen; bei Beschwerden auslassen."],
+ ["Glute Drive / Hip Thrust",3,"10–12","Oben Gesäß anspannen, Rippen unten halten und nicht ins Hohlkreuz drücken."],
+ ["Beinbeuger sitzend",2,"12–15","Ruhig beugen und strecken; Gewicht nicht fallen lassen."],
+ ["Brustpresse",3,"8–12","Schulterblätter anlehnen, Griffe kontrolliert nach vorne drücken."],
+ ["Latzug",3,"8–12","Stange vor dem Körper zur oberen Brust ziehen; nicht hinter den Kopf."],
+ ["Seitheben mit Kurzhanteln",2,"12–15","Leichte Hanteln; Arme leicht gebeugt und ohne Schwung seitlich anheben."],
+ ["Pallof Press am Kabelzug",2,"10–12 je Seite","Griff auf Brusthöhe nach vorne drücken und Rumpf gegen die Drehung stabil halten."]
+ ]},
+ B:{sub:"Kurzer Ganzkörpertag · ca. 45–50 Minuten",items:[
+ ["Rumänisches Kreuzheben mit Kurzhanteln",2,"10–12","Knie leicht gebeugt, Hüfte nach hinten schieben, Hanteln nah an den Beinen führen. Rücken neutral halten."],
+ ["Rudern am Kabelzug",3,"8–12","Griff Richtung Bauch ziehen, Oberkörper ruhig halten und kontrolliert zurückführen."],
+ ["Schrägbankdrücken mit Kurzhanteln",2,"8–12","Bank leicht schräg einstellen; kontrolliert drücken und nicht überstrecken."],
+ ["Beinbeuger sitzend",2,"12–15","Kontrollierte Bewegung; nur im angenehmen Bewegungsbereich."],
+ ["Bizepscurls mit Kurzhanteln",2,"10–12","Ellbogen nah am Körper, kein Schwung aus dem Rücken."],
+ ["Trizepsdrücken am Kabelzug",2,"10–15","Oberarme am Körper halten und Unterarme kontrolliert strecken."]
+ ]},
+ C:{sub:"Optionale dritte Einheit · ca. 45–55 Minuten",items:[
+ ["Brust-Fly-Maschine",2,"12–15","Arme mit leicht gebeugten Ellbogen vor der Brust zusammenführen."],
+ ["Latzug mit anderem Griff",2,"10–12","Kontrolliert zur oberen Brust ziehen; Griffvariante nur wählen, wenn angenehm."],
+ ["Glute Drive / Hip Thrust",2,"10–12","Gesäß bewusst anspannen, kontrolliert arbeiten."],
+ ["Schulterpresse",2,"10–12","Leicht starten, Rücken anlehnen und ohne Schwung drücken."],
+ ["Rudern am Gerät/Kabelzug",2,"10–12","Ruhig ziehen, Schultern nicht hochziehen."],
+ ["Hüftabduktion (optional)",2,"12–15","Nur ergänzen, wenn Zeit und Knie/Hüfte sich gut anfühlen."],
+ ["Trizepsdrücken am Kabelzug",2,"10–12","Ellbogen stabil halten."],
+ ["Bizepscurls",2,"10–12","Kontrolliert und ohne Schwung ausführen."]
+ ]}
+};
+const KEY="krafttraining_app_v1";
+let db=JSON.parse(localStorage.getItem(KEY)||'{"sessions":[]}');
+let current="A",formData={};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db))}
+function latestFor(name){for(const s of db.sessions){const e=s.exercises?.find(x=>x.name===name);if(e)return {session:s,exercise:e}}return null}
+function val(name,field,idx){return formData[name]?.sets?.[idx]?.[field]??""}
+function render(){
+ const p=plans[current];$("#planTitle").textContent="Training "+current;$("#planSub").textContent=p.sub;
+ $("#dateLabel").textContent=new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
+ $("#exercises").innerHTML=p.items.map(([name,count,reps,desc],i)=>{
+  const prev=latestFor(name),d=formData[name]||{},sets=Array.from({length:count},(_,n)=>({kg:val(name,"kg",n),reps:val(name,"reps",n),done:!!(d.sets?.[n]?.done)}));
+  const previous=prev?`<div class="prev"><strong>Letztes Mal · ${new Date(prev.session.date).toLocaleDateString("de-DE")}</strong><br>${prev.exercise.sets.map((s,j)=>`Satz ${j+1}: ${esc(s.kg||"–")} kg · ${esc(s.reps||"–")} Wdh.`).join(" &nbsp;|&nbsp; ")}<br><span class="muted">Einstellungen: ${esc(prev.exercise.setup||"Noch nicht eingetragen")}</span>${prev.exercise.notes?`<br><span class="muted">Notiz: ${esc(prev.exercise.notes)}</span>`:""}</div>`:'<div class="prev"><span class="muted">Noch keine früheren Werte gespeichert. Deine heutigen Einträge erscheinen beim nächsten Mal hier.</span></div>'};
+  return `<article class="exercise" data-name="${esc(name)}"><div class="exhead"><h3>${i+1}. ${esc(name)}</h3></div><div class="target">${count} Sätze × ${esc(reps)} Wiederholungen</div>${desc?`<div class="small">${esc(desc)}</div>`:""}${previous}
+  <div class="sets">${sets.map((s,n)=>`<div class="set"><div class="setnum">Satz ${n+1}</div><div><label>Gewicht (kg)</label><input inputmode="decimal" placeholder="z. B. 25" data-field="kg" data-index="${n}" value="${esc(s.kg)}"></div><div><label>Wdh.</label><input inputmode="numeric" placeholder="z. B. 12" data-field="reps" data-index="${n}" value="${esc(s.reps)}"></div><div class="donecell"><label>Erledigt</label><input type="checkbox" data-field="done" data-index="${n}" ${s.done?"checked":""}></div></div>`).join("")}</div>
+  <details class="setup" ${d.setup||prev?.exercise.setup?"":"open"}><summary>⚙ Geräteeinstellungen & Notizen</summary><div class="setupgrid"><div><label>Maschine / Sitzhöhe / Position</label><input data-field="setup" placeholder="z. B. Sitzhöhe 4, Lehne 2" value="${esc(d.setup??"")}"></div><div><label>Weitere Einstellung</label><input data-field="setup2" placeholder="z. B. Polster 3, Griff breit" value="${esc(d.setup2??"")}"></div></div><div class="notes"><label>Wie lief die Übung?</label><textarea data-field="notes" rows="2" placeholder="z. B. Letzter Satz schwer, aber sauber">${esc(d.notes??"")}</textarea></div></details></article>`;
+ }).join("");
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.plan===current));
+ document.querySelectorAll(".exercise input,.exercise textarea").forEach(el=>el.addEventListener("input",updateFromInput));
+ updateProgress();renderHistory();
+}
+function updateFromInput(e){
+ const card=e.target.closest(".exercise"),name=card.dataset.name,field=e.target.dataset.field,idx=e.target.dataset.index;
+ formData[name]??={sets:[]};
+ if(idx!==undefined){formData[name].sets??=[];formData[name].sets[idx]??={kg:"",reps:"",done:false};formData[name].sets[idx][field]=field==="done"?e.target.checked:e.target.value;}
+ else formData[name][field]=e.target.value;
+ updateProgress();
+}
+function updateProgress(){
+ const cards=[...document.querySelectorAll(".exercise")];let done=0;
+ cards.forEach(c=>{const checks=[...c.querySelectorAll('input[type=checkbox]')];if(checks.length&&checks.every(x=>x.checked))done++});
+ $("#progressBar").style.width=(done/Math.max(cards.length,1)*100)+"%";$("#progressText").textContent=`${done} von ${cards.length} Übungen erledigt`;
+}
+function renderHistory(){
+ const h=$("#history");if(!db.sessions.length){h.innerHTML='<span class="small">Noch keine Trainingseinheiten gespeichert.</span>';return}
+ h.innerHTML=db.sessions.slice(0,8).map(s=>`<div class="historyitem"><strong>Training ${esc(s.plan)}</strong> · ${new Date(s.date).toLocaleDateString("de-DE")}<div class="small">${s.exercises.length} Übungen gespeichert</div></div>`).join("");
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{current=b.dataset.plan;formData={};render()}));
+$("#saveBtn").addEventListener("click",()=>{
+ const exercises=[...document.querySelectorAll(".exercise")].map(card=>{
+  const name=card.dataset.name,d=formData[name]||{},sets=plans[current].items.find(x=>x[0]===name)[1];
+  return {name,sets:Array.from({length:sets},(_,i)=>({kg:d.sets?.[i]?.kg||"",reps:d.sets?.[i]?.reps||"",done:!!d.sets?.[i]?.done})),setup:[d.setup,d.setup2].filter(Boolean).join(" · "),notes:d.notes||""};
+ });
+ db.sessions.unshift({plan:current,date:new Date().toISOString(),exercises});saveDB();alert("Training gespeichert! Beim nächsten Mal siehst du diese Werte als Vergleich.");render();
+});
+$("#resetBtn").addEventListener("click",()=>{if(confirm("Alle aktuellen Eingaben für diese Einheit zurücksetzen?")){formData={};render()}});
+$("#exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mein-krafttraining-sicherung.json";a.click();URL.revokeObjectURL(a.href)});
+$("#importBtn").addEventListener("click",()=>$("#importFile").click());
+$("#importFile").addEventListener("change",async e=>{try{const obj=JSON.parse(await e.target.files[0].text());if(!Array.isArray(obj.sessions))throw Error();db=obj;saveDB();render();alert("Sicherung importiert.")}catch{alert("Datei konnte nicht gelesen werden.")}e.target.value=""});
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body></html>
