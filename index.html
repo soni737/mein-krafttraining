@@ -115,7 +115,19 @@ function render(){
  $("#dateLabel").textContent=new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
  $("#exercises").innerHTML=p.items.map(([name,count,reps,desc],i)=>{
   const prev=latestFor(name),d=formData[name]||{},sets=Array.from({length:count},(_,n)=>({kg:val(name,"kg",n),reps:val(name,"reps",n),done:!!(d.sets?.[n]?.done)}));
-  const previous=prev?`<div class="prev"><strong>Letztes Mal · ${new Date(prev.session.date).toLocaleDateString("de-DE")}</strong><br>${prev.exercise.sets.map((s,j)=>`Satz ${j+1}: ${esc(s.kg||"–")} kg · ${esc(s.reps||"–")} Wdh.`).join(" &nbsp;|&nbsp; ")}<br><span class="muted">Einstellungen: ${esc(prev.exercise.setup||"Noch nicht eingetragen")}</span>${prev.exercise.notes?`<br><span class="muted">Notiz: ${esc(prev.exercise.notes)}</span>`:""}</div>`:'<div class="prev"><span class="muted">Noch keine früheren Werte gespeichert. Deine heutigen Einträge erscheinen beim nächsten Mal hier.</span></div>'};
+  let previous = '<div class="prev"><span class="muted">Noch keine früheren Werte gespeichert. Deine heutigen Einträge erscheinen beim nächsten Mal hier.</span></div>';
+  if (prev) {
+    const prevSets = prev.exercise.sets.map((set, j) =>
+      "Satz " + (j + 1) + ": " + esc(set.kg || "–") + " kg · " + esc(set.reps || "–") + " Wdh."
+    ).join(" &nbsp;|&nbsp; ");
+    previous = '<div class="prev"><strong>Letztes Mal · ' +
+      new Date(prev.session.date).toLocaleDateString("de-DE") +
+      '</strong><br>' + prevSets +
+      '<br><span class="muted">Einstellungen: ' +
+      esc(prev.exercise.setup || "Noch nicht eingetragen") +
+      '</span>' + (prev.exercise.notes ? '<br><span class="muted">Notiz: ' +
+      esc(prev.exercise.notes) + '</span>' : '') + '</div>';
+  }
   return `<article class="exercise" data-name="${esc(name)}"><div class="exhead"><h3>${i+1}. ${esc(name)}</h3></div><div class="target">${count} Sätze × ${esc(reps)} Wiederholungen</div>${desc?`<div class="small">${esc(desc)}</div>`:""}${previous}
   <div class="sets">${sets.map((s,n)=>`<div class="set"><div class="setnum">Satz ${n+1}</div><div><label>Gewicht (kg)</label><input inputmode="decimal" placeholder="z. B. 25" data-field="kg" data-index="${n}" value="${esc(s.kg)}"></div><div><label>Wdh.</label><input inputmode="numeric" placeholder="z. B. 12" data-field="reps" data-index="${n}" value="${esc(s.reps)}"></div><div class="donecell"><label>Erledigt</label><input type="checkbox" data-field="done" data-index="${n}" ${s.done?"checked":""}></div></div>`).join("")}</div>
   <details class="setup" ${d.setup||prev?.exercise.setup?"":"open"}><summary>⚙ Geräteeinstellungen & Notizen</summary><div class="setupgrid"><div><label>Maschine / Sitzhöhe / Position</label><input data-field="setup" placeholder="z. B. Sitzhöhe 4, Lehne 2" value="${esc(d.setup??"")}"></div><div><label>Weitere Einstellung</label><input data-field="setup2" placeholder="z. B. Polster 3, Griff breit" value="${esc(d.setup2??"")}"></div></div><div class="notes"><label>Wie lief die Übung?</label><textarea data-field="notes" rows="2" placeholder="z. B. Letzter Satz schwer, aber sauber">${esc(d.notes??"")}</textarea></div></details></article>`;
